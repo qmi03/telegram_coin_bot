@@ -17,6 +17,16 @@ async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
+async def help(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    help_message = (
+        "Here are the commands you can use:\n"
+        "/start - Start the bot\n"
+        "/help - Get help\n"
+        "/get_rate - Get cryptocurrency rates\n"
+    )
+    await context.bot.send_message(chat_id=update.effective_chat.id, text=help_message)
+
+
 async def get_rate(update: Update, context: ContextTypes.DEFAULT_TYPE):
     coins = ["bitcoin", "ethereum"]
     prices = get_crypto_prices(coins)
@@ -25,11 +35,18 @@ async def get_rate(update: Update, context: ContextTypes.DEFAULT_TYPE):
         message_lines = []
         for coin, coin_prices in prices.items():
             line = f"<b>{coin}</b> price in " + ", ".join(
-                [f"<b>{currency.upper()}</b>: {price}" for currency, price in coin_prices.items()]
+                [
+                    f"<b>{currency.upper()}</b>: {price}"
+                    for currency, price in coin_prices.items()
+                ]
             )
             message_lines.append(line)
         message = "\n".join(message_lines)
     else:
         message = "Failed to retrieve prices. Please try again later."
 
-    await context.bot.send_message(chat_id=update.effective_chat.id, text=message, parse_mode=constants.ParseMode.HTML)
+    await context.bot.send_message(
+        chat_id=update.effective_chat.id,
+        text=message,
+        parse_mode=constants.ParseMode.HTML,
+    )
