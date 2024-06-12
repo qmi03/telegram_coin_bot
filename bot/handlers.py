@@ -18,14 +18,19 @@ async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def get_rate(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    bitcoin_price, ethereum_price = get_crypto_prices()
-
-    if bitcoin_price is not None and ethereum_price is not None:
-        message = f"""
-BTC/USD Conversion Rate: $ {bitcoin_price}
-ETH/USD Conversion Rate: $ {ethereum_price}
-        """
+    coins = ["bitcoin", "ethereum"]
+    prices = get_crypto_prices(coins)
+    print(prices)
+    if prices:
+        message_lines = []
+        for coin, coin_prices in prices.items():
+            line = f"{coin} price in " + ", ".join(
+                [f"{currency.upper()}: {price}" for currency, price in coin_prices.items()]
+            )
+            message_lines.append(line)
+        message = "\n".join(message_lines)
     else:
         message = "Failed to retrieve prices. Please try again later."
 
     await context.bot.send_message(chat_id=update.effective_chat.id, text=message)
+
