@@ -1,4 +1,4 @@
-from telegram import Update
+from telegram import Update, constants
 from telegram.ext import ContextTypes
 
 from bot.utils import get_crypto_prices
@@ -24,13 +24,12 @@ async def get_rate(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if prices:
         message_lines = []
         for coin, coin_prices in prices.items():
-            line = f"{coin} price in " + ", ".join(
-                [f"{currency.upper()}: {price}" for currency, price in coin_prices.items()]
+            line = f"<b>{coin}</b> price in " + ", ".join(
+                [f"<b>{currency.upper()}</b>: {price}" for currency, price in coin_prices.items()]
             )
             message_lines.append(line)
         message = "\n".join(message_lines)
     else:
         message = "Failed to retrieve prices. Please try again later."
 
-    await context.bot.send_message(chat_id=update.effective_chat.id, text=message)
-
+    await context.bot.send_message(chat_id=update.effective_chat.id, text=message, parse_mode=constants.ParseMode.HTML)
